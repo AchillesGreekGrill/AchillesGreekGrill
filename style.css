@@ -449,6 +449,8 @@ nav a:hover {
   height: 100%;
   background: rgba(0, 0, 0, 0.95);
   backdrop-filter: blur(10px);
+  align-items: center;
+  justify-content: center;
 }
 
 .modal-content {
@@ -459,11 +461,140 @@ nav a:hover {
   border-radius: 15px;
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
   animation: modalZoom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: transform 0.3s ease;
 }
 
 @keyframes modalZoom {
   from { transform: scale(0.7) rotate(-2deg); opacity: 0; }
   to { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+/* Navigation buttons */
+.nav-btn {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.1);
+  color: var(--greek-white);
+  border: none;
+  font-size: 3rem;
+  font-weight: bold;
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+  z-index: 2001;
+  user-select: none;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-btn:hover {
+  background: rgba(0, 0, 0, 0.3);
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.prev-btn {
+  left: 2rem;
+}
+
+.next-btn {
+  right: 2rem;
+}
+
+/* Close button styling */
+.close {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  color: var(--greek-white);
+  font-size: 3rem;
+  font-weight: bold;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  z-index: 2001;
+}
+
+.close:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+/* Modal indicators */
+.modal-indicators {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.8rem;
+  z-index: 2001;
+}
+
+.indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.indicator:hover {
+  background: rgba(255, 255, 255, 0.8);
+  transform: scale(1.2);
+}
+
+.indicator.active {
+  background: var(--restaurant-orange);
+  box-shadow: 0 0 15px rgba(255, 140, 0, 0.6);
+}
+
+/* Responsive modal adjustments */
+@media (max-width: 768px) {
+  .nav-btn {
+    font-size: 2rem;
+    padding: 0.8rem 1rem;
+  }
+
+  .prev-btn {
+    left: 1rem;
+  }
+
+  .next-btn {
+    right: 1rem;
+  }
+
+  .close {
+    top: 1rem;
+    right: 1rem;
+    font-size: 2rem;
+    width: 40px;
+    height: 40px;
+  }
+
+  .modal-indicators {
+    bottom: 1rem;
+  }
+
+  .indicator {
+    width: 10px;
+    height: 10px;
+  }
 }
 
 /* Enhanced Footer */
