@@ -65,9 +65,12 @@
 
             <p>Explore our carefully crafted menu featuring authentic Greek classics like gyro, chicken, and fresh tzatziki, alongside Southern favorites that have made us a local treasure. Each dish is prepared with passion and the finest ingredients.</p>
             
-            <div id="imageModal" class="modal" onclick="closeModal()" role="dialog" aria-label="Menu image viewer" aria-hidden="true">
+            <div id="imageModal" class="modal" onclick="closeModal(event)" role="dialog" aria-label="Menu image viewer" aria-hidden="true">
                 <span class="close" onclick="closeModal()" aria-label="Close menu image">&times;</span>
-                <img class="modal-content" id="modalImg" alt="">
+                <button class="nav-btn prev-btn" onclick="navigateModal(-1)" aria-label="Previous image">‹</button>
+                <button class="nav-btn next-btn" onclick="navigateModal(1)" aria-label="Next image">›</button>
+                <img class="modal-content" id="modalImg" alt="" onclick="event.stopPropagation()">
+                <div class="modal-indicators" id="modalIndicators"></div>
             </div>
         </section>
 
@@ -131,23 +134,123 @@
     </footer>
 
     <script>
-        // Enhanced modal functionality with keyboard support
+        // Enhanced modal functionality with swipe and navigation support
+        let currentImageIndex = 0;
+        const galleryImages = [];
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        // Initialize gallery images array
+        document.addEventListener('DOMContentLoaded', function() {
+            const images = document.querySelectorAll('.gallery img');
+            images.forEach((img, index) => {
+                galleryImages.push({
+                    src: img.src,
+                    alt: img.alt
+                });
+            });
+            createModalIndicators();
+        });
+
         function openModal(img) {
             const modal = document.getElementById("imageModal");
             const modalImg = document.getElementById("modalImg");
+
+            // Find the index of the clicked image
+            currentImageIndex = galleryImages.findIndex(image => image.src === img.src);
+
             modal.style.display = "block";
-            modalImg.src = img.src;
-            modalImg.alt = img.alt;
+            updateModalImage();
             modal.setAttribute('aria-hidden', 'false');
             document.body.style.overflow = 'hidden';
             modal.focus();
+
+            // Add touch event listeners
+            modal.addEventListener('touchstart', handleTouchStart, { passive: true });
+            modal.addEventListener('touchend', handleTouchEnd, { passive: true });
         }
 
-        function closeModal() {
+        function closeModal(event) {
+            if (event) {
+                event.stopPropagation();
+            }
             const modal = document.getElementById("imageModal");
             modal.style.display = "none";
             modal.setAttribute('aria-hidden', 'true');
             document.body.style.overflow = 'auto';
+
+            // Remove touch event listeners
+            modal.removeEventListener('touchstart', handleTouchStart);
+            modal.removeEventListener('touchend', handleTouchEnd);
+        }
+
+        function navigateModal(direction) {
+            currentImageIndex += direction;
+
+            // Loop around if at the ends
+            if (currentImageIndex >= galleryImages.length) {
+                currentImageIndex = 0;
+            } else if (currentImageIndex < 0) {
+                currentImageIndex = galleryImages.length - 1;
+            }
+
+            updateModalImage();
+        }
+
+        function updateModalImage() {
+            const modalImg = document.getElementById("modalImg");
+            const currentImage = galleryImages[currentImageIndex];
+
+            modalImg.src = currentImage.src;
+            modalImg.alt = currentImage.alt;
+            updateIndicators();
+        }
+
+        function createModalIndicators() {
+            const indicatorsContainer = document.getElementById('modalIndicators');
+            indicatorsContainer.innerHTML = '';
+
+            galleryImages.forEach((_, index) => {
+                const indicator = document.createElement('span');
+                indicator.className = 'indicator';
+                indicator.onclick = () => {
+                    currentImageIndex = index;
+                    updateModalImage();
+                };
+                indicatorsContainer.appendChild(indicator);
+            });
+        }
+
+        function updateIndicators() {
+            const indicators = document.querySelectorAll('.indicator');
+            indicators.forEach((indicator, index) => {
+                indicator.classList.toggle('active', index === currentImageIndex);
+            });
+        }
+
+        // Touch handling for swipe gestures
+        function handleTouchStart(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        }
+
+        function handleTouchEnd(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }
+
+        function handleSwipe() {
+            const threshold = 50; // Minimum distance for swipe
+            const diff = touchStartX - touchEndX;
+
+            if (Math.abs(diff) > threshold) {
+                if (diff > 0) {
+                    // Swipe left - next image
+                    navigateModal(1);
+                } else {
+                    // Swipe right - previous image
+                    navigateModal(-1);
+                }
+            }
         }
 
         // Advanced JavaScript Effects
@@ -322,8 +425,18 @@
         // Keyboard navigation for modal
         document.addEventListener('keydown', function(e) {
             const modal = document.getElementById("imageModal");
-            if (modal.style.display === "block" && e.key === 'Escape') {
-                closeModal();
+            if (modal.style.display === "block") {
+                switch(e.key) {
+                    case 'Escape':
+                        closeModal();
+                        break;
+                    case 'ArrowLeft':
+                        navigateModal(-1);
+                        break;
+                    case 'ArrowRight':
+                        navigateModal(1);
+                        break;
+                }
             }
         });
 
