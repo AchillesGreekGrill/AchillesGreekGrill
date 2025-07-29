@@ -471,10 +471,10 @@ nav a:hover {
 
 /* Navigation buttons */
 .nav-btn {
-  position: absolute;
+  position: fixed;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.1);
   color: var(--greek-white);
   border: none;
   font-size: 3rem;
@@ -483,13 +483,18 @@ nav a:hover {
   cursor: pointer;
   border-radius: 50%;
   transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(5px);
   z-index: 2001;
   user-select: none;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .nav-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(0, 0, 0, 0.3);
   transform: translateY(-50%) scale(1.1);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
 }
